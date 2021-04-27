@@ -1,0 +1,70 @@
+const express = require('express');
+const app = express();
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const port = process.env.PORT || 5080
+
+require("dotenv").config();
+
+app.use(cors());
+app.use(express.json());
+
+
+const MongoClient = require('mongodb').MongoClient;
+const uri = `mongodb+srv://${process.env.DB_USER}:${ process.env.DB_PASS}@cluster0.eq0p0.mongodb.net/${ process.env.DB_NAME}?retryWrites=true&w=majority`;
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+client.connect(err => {
+  const eventCollection = client.db(`${process.env.DB_Name}`).collection("event");
+  const volunteerCollection = client.db(`${process.env.DB_Name}`).collection("volunteer");
+
+
+// get Event
+  app.get("/event", (req ,res)=>{
+    eventCollection.find({}).toArray((err ,documents)=>{
+      res.send(documents)
+    })
+  });
+
+
+  // add Event
+  app.post('/addEvents' , (req ,res)=>{
+    const events = req.body
+    eventCollection.insertOne(events).then((event) =>{
+      console.log(event)
+      res.send(event.insertCount>0)
+    })
+
+  })
+
+  // get Event
+  app.get("/getVolunteer", (req ,res)=>{
+    volunteerCollection.find({}).toArray((err ,documents)=>{
+      res.send(documents)
+    })
+  });
+
+
+  // add volunteer
+  app.post('/addVolunteer', (req ,res)=>{
+    const volunteer = req.body
+    // console.log(volunteer)
+    volunteerCollection.insertOne(volunteer).then((vol) =>{
+      // console.log(vol)
+      res.send(vol.insertCount>0)
+    })
+
+  })
+
+
+
+  // client.close();
+});
+
+
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
+
+app.listen(port, () => {
+  console.log(`Example app listening at http://localhost:${port}`)
+})
