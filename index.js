@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const ObjectID = require("mongodb").ObjectID;
 const port = process.env.PORT || 5080
 
 require("dotenv").config();
@@ -25,15 +26,35 @@ client.connect(err => {
     })
   });
 
+// get single Event by ID
+  app.get("/event/:id", (req ,res)=>{
+    const id =ObjectID(req.params.id);
+    // console.log(id)
+    eventCollection.find({_id:id}).toArray((err, event)=>{
+      res.send(event)
+    });
+  });
+
 
   // add Event
   app.post('/addEvents' , (req ,res)=>{
     const events = req.body
     eventCollection.insertOne(events).then((event) =>{
-      console.log(event)
+      // console.log(event)
       res.send(event.insertCount>0)
     })
 
+  })
+
+
+   //delete event
+   app.delete('/deleteEvent/:id',(req,res)=>{
+    const id = ObjectID(req.params.id);
+    // console.log(id)
+    eventCollection.findOneAndDelete({_id:id}).then(result =>{
+      // console.log(result.value)
+      res.send(result.value)
+    })
   })
 
   // get Event
@@ -53,6 +74,15 @@ client.connect(err => {
       res.send(vol.insertCount>0)
     })
 
+  })
+  //delete volunteer
+  app.delete('/delete/:id',(req,res)=>{
+    const id = ObjectID(req.params.id);
+    // console.log(id)
+    volunteerCollection.findOneAndDelete({_id:id}).then(result =>{
+      // console.log(result.value)
+      res.send(result.value)
+    })
   })
 
 
