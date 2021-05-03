@@ -29,7 +29,6 @@ client.connect(err => {
 // get single Event by ID
   app.get("/event/:id", (req ,res)=>{
     const id =ObjectID(req.params.id);
-    // console.log(id)
     eventCollection.find({_id:id}).toArray((err, event)=>{
       res.send(event)
     });
@@ -40,7 +39,6 @@ client.connect(err => {
   app.post('/addEvents' , (req ,res)=>{
     const events = req.body
     eventCollection.insertOne(events).then((event) =>{
-      // console.log(event)
       res.send(event.insertCount>0)
     })
 
@@ -50,9 +48,7 @@ client.connect(err => {
    //delete event
    app.delete('/deleteEvent/:id',(req,res)=>{
     const id = ObjectID(req.params.id);
-    // console.log(id)
     eventCollection.findOneAndDelete({_id:id}).then(result =>{
-      // console.log(result.value)
       res.send(result.value)
     })
   })
@@ -68,9 +64,7 @@ client.connect(err => {
   // add volunteer
   app.post('/addVolunteer', (req ,res)=>{
     const volunteer = req.body
-    // console.log(volunteer)
     volunteerCollection.insertOne(volunteer).then((vol) =>{
-      // console.log(vol)
       res.send(vol.insertCount>0)
     })
 
@@ -80,9 +74,7 @@ client.connect(err => {
   //delete volunteer
   app.delete('/delete/:id',(req,res)=>{
     const id = ObjectID(req.params.id);
-    // console.log(id)
     volunteerCollection.findOneAndDelete({_id:id}).then(result =>{
-      // console.log(result.value)
       res.send(result.value)
     })
   })
