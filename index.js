@@ -39,6 +39,7 @@ client.connect(err => {
   app.post('/addEvents' , (req ,res)=>{
     const events = req.body
     eventCollection.insertOne(events).then((event) =>{
+      console.log(events)
       res.send(event.insertCount>0)
     })
 
